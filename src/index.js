@@ -48,6 +48,7 @@ username: 'zehreads'
 */
 
 const YEAR = 2019;
+const USERNAME = "zehreads";
 const DIMENSIONS = 4096;
 const MARGIN = 24;
 const GUTTER = 16;
@@ -107,7 +108,7 @@ const createImage = async (images) => {
 
 console.log(`\nLoading images for year "${YEAR}"...`);
 (async () => {
-	const images = await instagramPosts("zehreads", { count: 1000 })
+	const images = await instagramPosts(USERNAME, { count: 1000 })
 
 	console.log(`${images.length} total images found.`);
 	const validImages = images
