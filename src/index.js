@@ -55,6 +55,8 @@ const GUTTER = 24;
 const FILENAME = `${YEARS.join("-")}.png`;
 const BACKGROUND_COLOR = 0xffffffff;
 const EMPTY_CELL_COLOR = 0x000000ff;
+const INCLUDE_WORDS = [ "#justread" ];
+const EXCLUDE_WORDS = [ "#comics" ];
 
 const createImage = async (images) => {
 	console.log("Creating image.");
@@ -113,7 +115,8 @@ console.log(`\nLoading images for years "${YEARS.join("-")}"...`);
 			const imageYear = new Date(i.time * 1000).getFullYear();
 			return (
 				!i.is_video &&
-				i.text.includes("#justread") &&
+				INCLUDE_WORDS.every((w) => i.text.includes(w)) &&
+				EXCLUDE_WORDS.every((w) => !i.text.includes(w)) &&
 				YEARS.includes(imageYear)
 			);
 		})
