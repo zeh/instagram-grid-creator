@@ -98,6 +98,7 @@ const createImage = async (images) => {
 		}
 	}
 
+	image.colorType(2); // RGB without alpha channel
 	image.write(FILENAME);
 
 	console.log(`File ${FILENAME} created.\n`);
