@@ -47,12 +47,12 @@ url: 'https://www.instagram.com/p/B6jA44YAIc0',
 username: 'zehreads'
 */
 
-const YEAR = 2019;
+const YEARS = [ 2019 ];
 const USERNAME = "zehreads";
 const DIMENSIONS = 4096;
 const MARGIN = 24;
 const GUTTER = 16;
-const FILENAME = `${YEAR}.png`;
+const FILENAME = `${YEARS.join("-")}.png`;
 const BACKGROUND_COLOR = 0xffffffff;
 const EMPTY_CELL_COLOR = 0x000000ff;
 
@@ -106,7 +106,7 @@ const createImage = async (images) => {
 	});
 };
 
-console.log(`\nLoading images for year "${YEAR}"...`);
+console.log(`\nLoading images for years "${YEARS.join("-")}"...`);
 (async () => {
 	const images = await instagramPosts(USERNAME, { count: 1000 })
 
@@ -117,7 +117,7 @@ console.log(`\nLoading images for year "${YEAR}"...`);
 			return (
 				!i.is_video &&
 				i.text.includes("#justread") &&
-				imageYear === YEAR
+				YEARS.includes(imageYear)
 			);
 		})
 		.sort((a, b) => a.time - b.time);
