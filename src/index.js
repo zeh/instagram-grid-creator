@@ -57,6 +57,7 @@ const BACKGROUND_COLOR = 0xffffffff;
 const EMPTY_CELL_COLOR = 0x000000ff;
 const INCLUDE_WORDS = [ "#justread" ];
 const EXCLUDE_WORDS = [ "#comics" ];
+const MAX_IMAGES = 5000;
 
 const createImage = async (images) => {
 	console.log("Creating image.");
@@ -107,7 +108,7 @@ const createImage = async (images) => {
 
 console.log(`\nLoading images for years "${YEARS.join("-")}"...`);
 (async () => {
-	const images = await instagramPosts(USERNAME, { count: 1000 })
+	const images = await instagramPosts(USERNAME, { count: MAX_IMAGES })
 
 	console.log(`${images.length} total images found.`);
 	const validImages = images
