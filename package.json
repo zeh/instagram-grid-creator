@@ -1,0 +1,22 @@
+{
+  "name": "instagram-grid-creator",
+  "version": "1.0.0",
+  "description": "Generates an image grid for a user's Instagram feed",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zeh/instagram-grid-creator"
+  },
+  "scripts": {
+    "run": "node src/index.js"
+  },
+  "engines": {
+		"node": ">=12"
+	},
+  "author": "Zeh Fernando",
+  "license": "MIT",
+  "dependencies": {
+    "instagram-posts": "^2.2.0",
+    "jimp": "^0.9.3"
+  }
+}
