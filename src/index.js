@@ -58,52 +58,49 @@ const EMPTY_CELL_COLOR = 0x000000ff;
 
 const createImage = async (images) => {
 	console.log("Creating image.");
-	new Jimp(DIMENSIONS, DIMENSIONS, BACKGROUND_COLOR, async (err, image) => {
-		if (err) throw err;
+	const image = await new Jimp(DIMENSIONS, DIMENSIONS, BACKGROUND_COLOR);
 
-		const cols = Math.ceil(Math.sqrt(images.length));
-		const rows = Math.ceil(images.length / cols);
+	const cols = Math.ceil(Math.sqrt(images.length));
+	const rows = Math.ceil(images.length / cols);
 
-		console.log(`Image will have ${cols} cols and ${rows} rows.`);
+	console.log(`Image will have ${cols} cols and ${rows} rows.`);
 
-		const w = (DIMENSIONS - MARGIN * 2 - ((cols - 1) * GUTTER)) / cols;
-		const h = (DIMENSIONS - MARGIN * 2 - ((rows - 1) * GUTTER)) / rows;
+	const w = (DIMENSIONS - MARGIN * 2 - ((cols - 1) * GUTTER)) / cols;
+	const h = (DIMENSIONS - MARGIN * 2 - ((rows - 1) * GUTTER)) / rows;
 
-		for (let col = 0; col < cols; col++) {
+	for (let col = 0; col < cols; col++) {
 
-			const x0 = Math.round(MARGIN + GUTTER * col + w * col);
-			const x1 = Math.round(MARGIN + GUTTER * col + w * (col + 1));
+		const x0 = Math.round(MARGIN + GUTTER * col + w * col);
+		const x1 = Math.round(MARGIN + GUTTER * col + w * (col + 1));
 
-			for (let row = 0; row < rows; row++) {
-				const y0 = Math.round(MARGIN + GUTTER * row + h * row);
-				const y1 = Math.round(MARGIN + GUTTER * row + h * (row + 1));
+		for (let row = 0; row < rows; row++) {
+			const y0 = Math.round(MARGIN + GUTTER * row + h * row);
+			const y1 = Math.round(MARGIN + GUTTER * row + h * (row + 1));
 
-				const pos = row * cols + col;
-				console.log(`Creating image ${pos + 1}/${images.length} at column ${col + 1}, row ${row + 1}...`);
+			const pos = row * cols + col;
+			console.log(`Creating image ${pos + 1}/${images.length} at column ${col + 1}, row ${row + 1}...`);
 
-				if (pos < images.length) {
-					// Real image
-					const src = images[pos].media;
-					const thumb = await Jimp.read(src);
-					thumb.cover(x1 - x0, y1 - y0, 0, Jimp.RESIZE_BICUBIC);
-					image.blit(thumb, x0, y0);
-				} else {
-					// Filler
-					console.log(`  ...used a filler rectangle.`);
-					for (let x = x0; x <= x1; x++) {
-						for (let y = y0; y <= y1; y++) {
-							image.setPixelColor(EMPTY_CELL_COLOR, x, y);
-						}
+			if (pos < images.length) {
+				// Real image
+				const src = images[pos].media;
+				const thumb = await Jimp.read(src);
+				thumb.cover(x1 - x0, y1 - y0, 0, Jimp.RESIZE_BICUBIC);
+				image.blit(thumb, x0, y0);
+			} else {
+				// Filler
+				console.log(`  ...used a filler rectangle.`);
+				for (let x = x0; x <= x1; x++) {
+					for (let y = y0; y <= y1; y++) {
+						image.setPixelColor(EMPTY_CELL_COLOR, x, y);
 					}
 				}
 			}
 		}
+	}
 
-		image.write(FILENAME, (err) => {
-			if (err) throw err;
-			console.log(`File ${FILENAME} created.\n`);
-		});
-	});
+	image.write(FILENAME);
+
+	console.log(`File ${FILENAME} created.\n`);
 };
 
 console.log(`\nLoading images for years "${YEARS.join("-")}"...`);
