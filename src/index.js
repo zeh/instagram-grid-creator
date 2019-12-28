@@ -68,14 +68,13 @@ const createImage = async (images) => {
 	const w = (DIMENSIONS - MARGIN * 2 - ((cols - 1) * GUTTER)) / cols;
 	const h = (DIMENSIONS - MARGIN * 2 - ((rows - 1) * GUTTER)) / rows;
 
-	for (let col = 0; col < cols; col++) {
+	for (let row = 0; row < rows; row++) {
+		const y0 = Math.round(MARGIN + GUTTER * row + h * row);
+		const y1 = Math.round(MARGIN + GUTTER * row + h * (row + 1));
 
-		const x0 = Math.round(MARGIN + GUTTER * col + w * col);
-		const x1 = Math.round(MARGIN + GUTTER * col + w * (col + 1));
-
-		for (let row = 0; row < rows; row++) {
-			const y0 = Math.round(MARGIN + GUTTER * row + h * row);
-			const y1 = Math.round(MARGIN + GUTTER * row + h * (row + 1));
+		for (let col = 0; col < cols; col++) {
+			const x0 = Math.round(MARGIN + GUTTER * col + w * col);
+			const x1 = Math.round(MARGIN + GUTTER * col + w * (col + 1));
 
 			const pos = row * cols + col;
 			console.log(`Creating image ${pos + 1}/${images.length} at column ${col + 1}, row ${row + 1}...`);
