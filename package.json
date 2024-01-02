@@ -11,12 +11,12 @@
     "create": "node src/index.js"
   },
   "engines": {
-		"node": ">=12"
-	},
+    "node": ">=12"
+  },
   "author": "Zeh Fernando",
   "license": "MIT",
   "dependencies": {
     "instagram-posts": "^2.2.0",
-    "jimp": "^0.9.3"
+    "jimp": "0.22.10"
   }
 }
