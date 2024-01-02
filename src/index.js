@@ -1,4 +1,4 @@
-const instagramPosts = require("instagram-posts");
+const fetch = require("node-fetch");
 const Jimp = require("jimp");
 
 /*
@@ -47,7 +47,14 @@ url: 'https://www.instagram.com/p/B6jA44YAIc0',
 username: 'zehreads'
 */
 
-const YEARS = [ 2019 ];
+/*
+(async () => {
+	const imgs = document.querySelectorAll("[alt*='⭐']");
+	const postURLs = Array.from(imgs).map((i) => i.parentNode.parentNode.parentNode.attributes["href"].value);
+})();
+*/
+
+const YEARS = [ 2023 ];
 const USERNAME = "zehreads";
 const DIMENSIONS = 4096;
 const MARGIN = 24;
@@ -58,6 +65,7 @@ const EMPTY_CELL_COLOR = 0x000000ff;
 const INCLUDE_WORDS = [ "#justread" ];
 const EXCLUDE_WORDS = [ "#comics" ];
 const MAX_IMAGES = 5000;
+const DOMAIN = "https://www.instagram.com";
 
 const createImage = async (images) => {
 	console.log("Creating image.");
@@ -106,9 +114,21 @@ const createImage = async (images) => {
 	console.log(`File ${FILENAME} created.\n`);
 };
 
-console.log(`\nLoading images for years "${YEARS.join("-")}"...`);
+const readUserPosts = async (username) => {
+	const response = await fetch(`${DOMAIN}/${username}`);
+	const data = await response.text();
+	console.log("!!! PAGE=", data);
+
+};
+
+console.log(`Loading images for years "${YEARS.join("-")}"...`);
 (async () => {
-	const images = await instagramPosts(USERNAME, { count: MAX_IMAGES })
+	console.log("Reading user page...");
+	const images = await readUserPosts(USERNAME, { count: MAX_IMAGES })
+
+	console.log("!!! IMAGES = ", images);
+
+	return;
 
 	console.log(`${images.length} total images found.`);
 	const validImages = images
