@@ -16,7 +16,6 @@
   "author": "Zeh Fernando",
   "license": "MIT",
   "dependencies": {
-    "instagram-posts": "^2.2.0",
     "jimp": "0.22.10"
   }
 }
