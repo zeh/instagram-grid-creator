@@ -20,7 +20,42 @@ Instructions to run:
 3. Will create <YEARS>.png (<YEARS>.md is created manually)
 */
 
-// Image is { src, text }
+// Finds the rect an image has to be cropped to for it to cover a viewport with a given "focal point"
+const getCoverCropRect = (imageWidth, imageHeight, viewportWidth, viewportHeight, focusPoint) => {
+	const imageAspect = imageWidth / imageHeight;
+	const viewportAspect = viewportWidth / viewportHeight;
+
+	let newImageWidth = NaN;
+	let newImageHeight = NaN;
+
+	if (imageAspect > viewportAspect) {
+		// Image is "wider" than viewport, orient by viewport height
+		newImageHeight = imageHeight;
+		newImageWidth = Math.round(imageHeight * viewportAspect);
+	} else {
+		// Image is "taller" than viewport, orient by viewport width
+		newImageWidth = imageWidth;
+		newImageHeight = Math.round(imageWidth / viewportAspect);
+	}
+
+	// Orient by focal point
+	// https://docs-p.joinmastodon.org/api/guidelines/#focal-points
+	let offsetX = Math.round(imageWidth * 0.5 - newImageWidth * 0.5 - focusPoint.x * imageWidth * 0.5);
+	let offsetY = Math.round(imageHeight * 0.5 - newImageHeight * 0.5 - focusPoint.y * imageHeight * 0.5);
+
+	// If the focal point moves the image out of the visible viewport, move it back
+	offsetX = Math.max(0, Math.min(offsetX, imageWidth - newImageWidth));
+	offsetY = Math.max(0, Math.min(offsetY, imageHeight - newImageHeight));
+
+	return {
+		x: offsetX,
+		y: offsetY,
+		width: newImageWidth,
+		height: newImageHeight,
+	};
+}
+
+// Image is { src, text, focus {x, y} }
 const createImage = async (images) => {
 	console.log("Creating image.");
 	const image = await new Jimp(DIMENSIONS, DIMENSIONS, BACKGROUND_COLOR);
@@ -48,7 +83,16 @@ const createImage = async (images) => {
 				// Real image
 				const src = images[pos].src;
 				const thumb = await Jimp.read(src);
-				thumb.cover(x1 - x0, y1 - y0, 0, Jimp.RESIZE_BICUBIC);
+				// Crop the thumb to a size that will fit into the aspect ratio
+				// of the expected cell, while respecting the focus point
+				const cellWidth = x1 - x0;
+				const cellHeight = y1 - y0;
+				// Normally we'd use `thumb.cover(w, h, 0, Jimp.RESIZE_BICUBIC)` here,
+				// but we do it all manually to control the alignment properly
+				const rect = getCoverCropRect(thumb.bitmap.width, thumb.bitmap.height, cellWidth, cellHeight, images[pos].focus ?? { x: 0, y: 0 });
+				thumb.crop(rect.x, rect.y, rect.width, rect.height);
+				// Resize to the expected size
+				thumb.resize(cellWidth, cellHeight, Jimp.RESIZE_BICUBIC);
 				image.blit(thumb, x0, y0);
 			} else {
 				// Filler
@@ -141,6 +185,7 @@ console.log(`\nLoading statuses for years "${YEARS.join("-")}"...`);
 		// This should be `s.text`, but it's not working
 		text: cleanUpHTML(s.content),
 		src: s.media_attachments[0].url,
+		focus: s.media_attachments[0].meta.focus,
 	})).filter((i) => (
 		INCLUDE_WORDS.every((w) => i.text.includes(w)) &&
 		EXCLUDE_WORDS.every((w) => !i.text.includes(w))
